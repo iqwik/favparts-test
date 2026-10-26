@@ -1,0 +1,33 @@
+{
+  "name": "yural-test",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "preview": "vite preview",
+    "api:generate": "rtk-query-codegen-openapi openapi-config.json && biome check --write src/api"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.13.0",
+    "bootstrap": "^5.3.0",
+    "lodash-es": "^4.18.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-redux": "^9.3.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.3",
+    "@rtk-query/codegen-openapi": "^2.2.0",
+    "@types/lodash-es": "^4.17.12",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "typescript": "~6.0.3",
+    "vite": "^8.3.4"
+  }
+}

@@ -1,0 +1,210 @@
+openapi: 3.0.3
+info:
+  title: Favorit Parts "Проценка" API
+  version: 1.0.0
+  description: |
+    Web-сервис «Проценка» для получения товаров/аналогов по номеру детали.
+    Базовый URL задаётся на стороне приложения (fetchBaseQuery),
+    в спецификации он намеренно не зашит.
+
+paths:
+  /hs/hsprice/:
+    get:
+      operationId: getHsPrice
+      summary: Получить товары или аналоги по номеру детали
+      description: |
+        GET-запрос с query-параметрами.
+
+        Спецсимволы в `number` и `brand` нужно URL-encode
+        (например, `#` → `%23`, `&` → `%26`).
+
+        `analogues=on` имеет смысл только при заполненном `brand`.
+        `info=on` добавляет в ответ признак `notRefund`.
+
+        При ошибке возвращается JSON вида `{"error": "..."}`.
+      parameters:
+        - name: key
+          in: query
+          required: true
+          description: Уникальный ключ покупателя.
+          schema:
+            type: string
+
+        - name: number
+          in: query
+          required: true
+          description: Номер детали. Спецсимволы URL-encode.
+          schema:
+            type: string
+
+        - name: brand
+          in: query
+          required: false
+          description: Производитель. Необязательный параметр. Спецсимволы URL-encode.
+          schema:
+            type: string
+
+        - name: analogues
+          in: query
+          required: false
+          description: Если `"on"` и заполнен `brand` — вернуть аналоги детали.
+          schema:
+            type: string
+            enum: ["on"]
+
+        - name: info
+          in: query
+          required: false
+          description: Если `"on"` — вернуть признак невозвратных позиций `notRefund`.
+          schema:
+            type: string
+            enum: ["on"]
+
+      responses:
+        "200":
+          description: |
+            Успешный ответ содержит массив `goods`.
+            При ошибке возвращается объект `error`.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/GoodsResponse"
+                  - $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    GoodsResponse:
+      type: object
+      required:
+        - goods
+      properties:
+        goods:
+          type: array
+          items:
+            $ref: "#/components/schemas/Goods"
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: |
+            Описание ошибки. Возможные значения:
+            `Empty key!`, `Invalid key client!`, `Empty number goods!`,
+            `Request quota exceeded!`.
+
+    Goods:
+      type: object
+      required:
+        - goodsID
+        - brand
+        - number
+        - name
+        - count
+        - price
+        - rate
+        - warehouses
+      properties:
+        goodsID:
+          type: string
+          description: Идентификатор товара.
+
+        brand:
+          type: string
+          description: Производитель.
+
+        number:
+          type: string
+          description: Номер детали.
+
+        name:
+          type: string
+          description: Наименование детали.
+
+        count:
+          type: integer
+          description: Остаток на всех складах.
+
+        price:
+          type: number
+          format: double
+          description: |
+            НЕ ИСПОЛЬЗОВАТЬ. Цену нужно брать из конкретного склада
+            (`warehouses[].price`). Оставлено для совместимости.
+
+        rate:
+          type: integer
+          description: Кратность.
+
+        analogues:
+          type: array
+          description: |
+            Массив аналогов. Возвращается, если переданы
+            `analogues=on` и `brand`.
+          items:
+            $ref: "#/components/schemas/Goods"
+
+        warehouses:
+          type: array
+          description: Склады, на которых имеется товар.
+          items:
+            $ref: "#/components/schemas/Warehouse"
+
+        notRefund:
+          type: boolean
+          description: |
+            Признак невозвратной позиции.
+            Возвращается при `info=on`.
+
+    Warehouse:
+      type: object
+      required:
+        - id
+        - own
+        - price
+        - stock
+      properties:
+        code:
+          type: string
+          description: |
+            Сокращённое наименование склада.
+            Имеется не у всех складов.
+
+        id:
+          type: string
+          description: Внутренний идентификатор склада.
+
+        own:
+          type: boolean
+          description: Товар находится на нашем складе.
+
+        shipmentDate:
+          type: string
+          format: date-time
+          description: |
+            Дата и время. Дата — дата отгрузки товара.
+            Время — до какого часа можно заказать,
+            чтобы товар отгрузили в эту дату.
+
+        price:
+          type: number
+          format: double
+          description: Цена на этом складе.
+
+        stock:
+          type: integer
+          description: Остаток на этом складе.
+
+        notRefund:
+          type: boolean
+          description: Невозвратная позиция.
+
+        warehouseShipping:
+          type: string
+          description: |
+            Поле присутствует в примерах ответа PDF, но не описано
+            в таблице полей склада. Оставлено необязательным
+            для совместимости.
