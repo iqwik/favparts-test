@@ -1,7 +1,6 @@
 import type {Goods} from '@/api/favoritPriceApi'
+import {EMPTY_GOODS_ID} from '@/shared/constants'
 import {pickBestWarehouse} from '../model/lib'
-
-const EMPTY_GOODS_ID = '00000000-0000-0000-0000-000000000000'
 
 /** Разворачивает основную позицию и её аналоги в плоский список. */
 function flattenOffers(goods: Goods[]): Goods[] {

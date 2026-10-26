@@ -1,6 +1,7 @@
 # Проценка запчастей
 
 Веб-приложение для поиска автозапчастей и их аналогов с использованием API сервиса Favorit Parts.
+<!-- 🔗 **Демо-версия (GitHub Pages):** [https://iqwik.github.io/favparts-test/](https://iqwik.github.io/favparts-test/) -->
 
 ## Стек технологий
 
@@ -48,8 +49,8 @@ src/
 
 ## Основные команды
 
-- `npm run dev` — запуск сервера разработки (Vite).
-- `npm run build` — сборка production-версии проекта.
-- `npm run api:generate` — генерация API клиента из OpenAPI и его форматирование.
-- `npm run lint` — проверка кода линтером Biome.
-- `npm run lint:fix` — автоисправление ошибок линтера Biome.
+- `npm run dev` - запуск сервера разработки (Vite).
+- `npm run build` - сборка production-версии проекта.
+- `npm run api:generate` - генерация API клиента из OpenAPI и его форматирование.
+- `npm run lint` - проверка кода линтером Biome.
+- `npm run lint:fix` - автоисправление ошибок линтера Biome.

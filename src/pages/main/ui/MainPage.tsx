@@ -1,4 +1,4 @@
-import {PriceCalculator} from '@/widgets/price-calculator/ui/PriceCalculator'
+import {PriceCalculator} from '@/widgets/price-calculator'
 
 export function MainPage() {
   return (

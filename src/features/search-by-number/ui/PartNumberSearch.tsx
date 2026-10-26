@@ -1,7 +1,7 @@
 import debounce from 'lodash-es/debounce'
 import {useEffect, useEffectEvent, useMemo, useState} from 'react'
 
-const EXAMPLE_NUMBERS = ['7160500039S', '01898', '53612/1', '01089']
+const EXAMPLE_NUMBERS = ['7160500039S', '01898', 'FR-K-10611', '01089']
 
 type Props = {
   onSearch: (value: string) => void

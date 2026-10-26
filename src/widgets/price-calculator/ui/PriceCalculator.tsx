@@ -1,11 +1,11 @@
 import {useMemo, useState} from 'react'
+import {CUSTOMER_KEY} from '@/api/constants'
 import {type GoodsResponse, useGetHsPriceQuery} from '@/api/favoritPriceApi'
 import {OffersTable} from '@/entities/goods'
 import {PartNumberSearch} from '@/features/search-by-number'
 import {BrandList} from '@/features/select-brand'
+import {EMPTY_GOODS_ID} from '@/shared/constants'
 import {encodePartParam} from '@/shared/lib/url'
-
-const CUSTOMER_KEY = 'A1234567-ABCD-1234-ABCD-ABC123456789' as const
 
 export function PriceCalculator() {
   const [number, setNumber] = useState('')
@@ -36,19 +36,17 @@ export function PriceCalculator() {
 
   // Агрегация брендов
   const brands = useMemo(() => {
-    if (isDataWithGoods(step1.data)) {
-      return Array.from(
-        step1.data.goods.reduce((acc, g) => {
-          if (g.brand && g.goodsID !== CUSTOMER_KEY) {
-            acc.set(g.brand, (acc.get(g.brand) || 0) + (g.count || 0))
-          }
-          return acc
-        }, new Map<string, number>()),
-      ).map(([brand, stock]) => ({brand, stock}))
+    if (!isDataWithGoods(step1.data)) return []
+
+    const map = new Map<string, number>()
+    for (const g of step1.data.goods) {
+      if (g.brand && g.goodsID !== EMPTY_GOODS_ID) {
+        map.set(g.brand, (map.get(g.brand) ?? 0) + (g.count ?? 0))
+      }
     }
 
-    return []
-  }, [step1?.data])
+    return Array.from(map, ([brand, stock]) => ({brand, stock}))
+  }, [step1.data])
 
   return (
     <section>
